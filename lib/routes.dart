@@ -18,33 +18,29 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return const Sidebar();
       },
-      routes: <RouteBase>[
-        centrosRoute,
-        pacientesRoute,
-      ],
+      routes: <RouteBase>[centrosRoute, pacientesRoute],
     ),
   ],
 );
 
-
 // region Routes Centros Médicos
 
 final GoRoute centrosRoute = GoRoute(
-  path: '/centros',
+  path: 'centros',
   builder: (BuildContext context, GoRouterState state) {
     return const Layout(page: CentrosMedicos());
   },
   routes: <RouteBase>[
     GoRoute(
-      path: '/:id',
-      builder: (BuildContext context, GoRouterState state) {
-        return Layout(page: CentroMedico());
-      },
-    ),
-    GoRoute(
       path: '/registrar',
       builder: (BuildContext context, GoRouterState state) {
         return const Layout(page: RegistrarCentro());
+      },
+    ),
+    GoRoute(
+      path: '/id',
+      builder: (BuildContext context, GoRouterState state) {
+        return Layout(page: CentroMedico());
       },
     ),
   ],
@@ -53,23 +49,24 @@ final GoRoute centrosRoute = GoRoute(
 // region Routes Pacientes
 
 final GoRoute pacientesRoute = GoRoute(
-  path: '/pacientes',
+  path: 'pacientes',
   builder: (BuildContext context, GoRouterState state) {
     return const Layout(page: Pacientes());
   },
   routes: <RouteBase>[
-    GoRoute(
-      path: '/:id',
-      builder: (BuildContext context, GoRouterState state) {
-        final String id = state.pathParameters['id'] ?? '';
-        return Layout(page: Paciente(id: int.parse(id)));
-      },
-    ),
     GoRoute(
       path: '/registrar',
       builder: (BuildContext context, GoRouterState state) {
         return const Layout(page: RegistrarPaciente());
       },
     ),
-  ]
+    GoRoute(
+      path: '/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = int.tryParse(state.pathParameters['id'] ?? '');
+        if (id == null) return const Text("Invalid ID");
+        return Layout(page: Paciente(id: 1));
+      },
+    ),
+  ],
 );

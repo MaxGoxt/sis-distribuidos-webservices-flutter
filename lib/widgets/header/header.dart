@@ -45,7 +45,7 @@ class Header extends StatelessWidget {
               ? [
                 OutlineButton(
                   onPressed: () {
-                    context.go('$route/registrar');
+                    context.go('/${route.split("/")[1]}/registrar');
                   },
                   density: ButtonDensity.icon,
                   child: const Icon(Icons.add),

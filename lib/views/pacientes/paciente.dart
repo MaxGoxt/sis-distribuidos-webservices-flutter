@@ -14,7 +14,7 @@ class Paciente extends StatefulWidget implements DefaultPage {
   @override
   final String route;
 
-  const Paciente({super.key, required this.id}) : route = '/paciente/$id';
+  const Paciente({super.key, required this.id}) : route = '/pacientes/$id';
 
   @override
   State<Paciente> createState() => _PacienteState();
