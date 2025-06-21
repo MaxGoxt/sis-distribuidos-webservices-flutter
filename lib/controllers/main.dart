@@ -134,12 +134,14 @@ class API {
 
   Future<CentroMedico> createCentroMedico(CentroMedico centroMedico) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/centros_medicos'),
+      Uri.parse('$baseUrl/centrosmedicos'),
       headers: {'Content-Type': 'application/json'},
-      body: centroMedico.toJson(),
+      body: json.encode(centroMedico.toJson()),
     );
-    if (response.statusCode == 201) {
-      return CentroMedico.fromJson(response.body as Map<String, dynamic>);
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return CentroMedico.fromJson(
+        json.decode(response.body) as Map<String, dynamic>,
+      );
     } else {
       throw Exception('Failed to create centro medico');
     }

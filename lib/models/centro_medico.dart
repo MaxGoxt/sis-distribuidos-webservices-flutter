@@ -1,11 +1,11 @@
 class CentroMedico {
-  int id;
+  int? id;
   String nombre;
   String direccion;
   String telefono;
 
   CentroMedico({
-    required this.id,
+    this.id,
     required this.nombre,
     required this.direccion,
     required this.telefono,
@@ -13,7 +13,6 @@ class CentroMedico {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'nombre': nombre,
       'direccion': direccion,
       'telefono': telefono,
