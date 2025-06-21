@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:sis_distribuidos_webservices/models/centro_medico.dart';
 import 'package:sis_distribuidos_webservices/models/familiar.dart';
 import 'package:sis_distribuidos_webservices/models/paciente.dart';
 import 'package:http/http.dart' as http;
 
-
-class Main {
+class API {
   final String baseUrl = 'http://localhost:8080';
 
   Future<List<Familiar>> getFamiliares() async {
@@ -61,9 +62,9 @@ class Main {
 
   Future<List<Paciente>> getPacientes() async {
     final response = await http.get(Uri.parse('$baseUrl/pacientes'));
-    print(response.body);
+
     if (response.statusCode == 200) {
-      final List<dynamic> data = response.body as List<dynamic>;
+      final List<dynamic> data = json.decode(response.body);
       return data.map((item) => Paciente.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load pacientes');
@@ -144,7 +145,10 @@ class Main {
     }
   }
 
-  Future<CentroMedico> updateCentroMedico(int id, CentroMedico centroMedico) async {
+  Future<CentroMedico> updateCentroMedico(
+    int id,
+    CentroMedico centroMedico,
+  ) async {
     final response = await http.put(
       Uri.parse('$baseUrl/centros_medicos/$id'),
       headers: {'Content-Type': 'application/json'},
@@ -158,7 +162,9 @@ class Main {
   }
 
   Future<void> deleteCentroMedico(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/centros_medicos/$id'));
+    final response = await http.delete(
+      Uri.parse('$baseUrl/centros_medicos/$id'),
+    );
     if (response.statusCode != 204) {
       throw Exception('Failed to delete centro medico');
     }

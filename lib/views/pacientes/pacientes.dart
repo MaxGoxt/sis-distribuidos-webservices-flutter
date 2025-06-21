@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:sis_distribuidos_webservices/controllers/main.dart';
 import 'package:sis_distribuidos_webservices/models/paciente.dart';
 import 'package:sis_distribuidos_webservices/views/page.d.dart';
 
@@ -21,58 +22,52 @@ class Pacientes extends StatefulWidget implements DefaultPage {
 }
 
 class _PacientesState extends State<Pacientes> {
-  final List<Paciente> pacientes = [
-    Paciente(
-      id: 1,
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      documento: '5.678.910-1',
-      fechaNacimiento: DateTime(2000),
-    ),
-    Paciente(
-      id: 2,
-      nombre: 'María',
-      apellido: 'López',
-      documento: '3.456.789-0',
-      fechaNacimiento: DateTime(2000),
-    ),
-    Paciente(
-      id: 3,
-      nombre: 'Carlos',
-      apellido: 'García',
-      documento: '4.123.456-7',
-      fechaNacimiento: DateTime(2000),
-    ),
-    Paciente(
-      id: 4,
-      nombre: 'Ana',
-      apellido: 'Martínez',
-      documento: '8.234.567-8',
-      fechaNacimiento: DateTime(2000),
-    ),
-    Paciente(
-      id: 5,
-      nombre: 'Luis',
-      apellido: 'Rodríguez',
-      documento: '4.890.123-9',
-      fechaNacimiento: DateTime(2000),
-    ),
-    // Agrega más pacientes según sea necesario
-  ];
+  List<Paciente> pacientes = []; // ← ✅ lista inicial vacía
+  bool isLoading = true;         // ← opcional: para mostrar un loader
+
+  final API api = API();
+
+  Future<void> _fetchPacientes() async {
+    try {
+      var data = await api.getPacientes();
+      setState(() {
+        pacientes = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching pacientes: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPacientes();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(child: Text("Cargando pacientes..."));
+    }
+
+    if (pacientes.isEmpty) {
+      return Center(child: Text('No hay pacientes registrados.'));
+    }
+
     return ListView.builder(
       itemCount: pacientes.length,
       itemBuilder: (context, index) {
+        final paciente = pacientes[index];
         return Padding(
           padding: EdgeInsets.all(10),
           child: OutlinedContainer(
             child: ListTile(
-              title: Text(pacientes[index].nombre),
-              subtitle: Text(pacientes[index].documento),
+              title: Text(paciente.nombre),
+              subtitle: Text(paciente.documento),
               onTap: () {
-                context.go('/pacientes/${pacientes[index].id}');
+                context.go('/pacientes/${paciente.id}');
               },
             ),
           ),
