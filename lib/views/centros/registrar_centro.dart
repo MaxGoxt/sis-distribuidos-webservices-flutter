@@ -52,7 +52,12 @@ class _RegistrarCentroState extends State<RegistrarCentro> {
 
     try {
       final response = await api.createCentroMedico(
-        CentroMedico(nombre: nombre, direccion: direccion, telefono: telefono),
+        CentroMedico(
+          nombre: nombre,
+          direccion: direccion,
+          telefono: telefono,
+          pacientes: [],
+        ),
       );
 
       if (!mounted) return;

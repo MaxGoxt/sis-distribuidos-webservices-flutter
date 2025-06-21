@@ -1,13 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:sis_distribuidos_webservices/controllers/main.dart';
 import 'package:sis_distribuidos_webservices/views/page.d.dart';
 import 'package:sis_distribuidos_webservices/widgets/draggable/column.dart';
-import 'package:sis_distribuidos_webservices/models/centro_medico.dart' as model;
+import 'package:sis_distribuidos_webservices/models/centro_medico.dart'
+    as model;
 
 class CentroMedico extends StatefulWidget implements DefaultPage {
-
   @override
   final String namePage = 'Centro Médico';
-  
+
   @override
   final String description = 'Administración de centros médicos y pacientes';
 
@@ -23,38 +25,87 @@ class CentroMedico extends StatefulWidget implements DefaultPage {
 }
 
 class _CentroMedicoState extends State<CentroMedico> {
+  final API api = API();
+  model.CentroMedico? centro;
+  bool isLoading = true;
+  late List<SortableData<Widget>> colCentroMedico = [];
+  late List<SortableData<Widget>> colPacientes = [];
 
-  final model.CentroMedico centro = model.CentroMedico(
-    id: 1,
-    nombre: 'Centro Médico A',
-    direccion: 'Av. Principal 123',
-    telefono: '099 999 999',
-  );
+  Future<void> _fetchCentro(int id) async {
+    try {
+      var data = await api.getCentroMedicoById(id);
+      setState(() {
+        centro = data;
+        colCentroMedico = [
+          ...data.pacientes.map(
+            (paciente) => SortableData(Text(paciente.nombre)),
+          ),
+        ];
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching centros médicos: $e');
+      }
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
-  List<SortableData<Widget>> colCentroMedico = [];
+  Future<void> _fetchPacientes() async {
+    try {
+      var data = await api.getPacientes();
+      setState(() {
+        colPacientes = [
+          ...data
+              .where(
+                (paciente) =>
+                    !(centro?.pacientes.any((p) => p.id == paciente.id) ??
+                        false),
+              )
+              .map((paciente) => SortableData(Text(paciente.nombre))),
+        ];
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching pacientes: $e');
+      }
+    }
+  }
 
-  List<SortableData<Widget>> colPacientes = [
-    const SortableData(Text('David')),
-    const SortableData(Text('Richard')),
-    const SortableData(Text('Joseph')),
-    const SortableData(Text('Thomas')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-    const SortableData(Text('Charles')),
-  ];
+  Future<void> _deleteCentro(int id) async {
+    try {
+      await api.deleteCentroMedico(id);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting centro médico: $e');
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _init();
+  }
+
+  void _init() async {
+    await _fetchCentro(widget.id);
+    await _fetchPacientes();
   }
 
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height;
+
+    if (isLoading) {
+      return Center(child: Text("Cargando centros médicos..."));
+    }
+
+    if (centro == null) {
+      return Center(child: Text('No se encontró este centro médico.'));
+    }
 
     return ListView(
       children: [
@@ -73,7 +124,7 @@ class _CentroMedicoState extends State<CentroMedico> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: SortableColumn(
-                      title: centro.nombre,
+                      title: centro!.nombre,
                       list: colCentroMedico,
                       allLists: [colCentroMedico, colPacientes],
                       targetList: colPacientes,
@@ -119,40 +170,39 @@ class _CentroMedicoState extends State<CentroMedico> {
         ),
         const SizedBox(height: 12),
         Card(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Centro Médico').semiBold(),
-                const SizedBox(height: 4),
-                Text(centro.nombre).muted().small(),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Centro Médico').semiBold(),
+              const SizedBox(height: 4),
+              Text(centro!.nombre).muted().small(),
 
-                const SizedBox(height: 24),
-                const Text('Teléfono').semiBold().small(),
+              const SizedBox(height: 24),
+              const Text('Teléfono').semiBold().small(),
 
-                const SizedBox(height: 4),
-                Text(centro.telefono).muted().small(),
+              const SizedBox(height: 4),
+              Text(centro!.telefono).muted().small(),
 
-                const SizedBox(height: 4),
-                Text(centro.direccion).muted().small(),
+              const SizedBox(height: 4),
+              Text(centro!.direccion).muted().small(),
 
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    OutlineButton(
-                      child: const Text('Editar'),
-                      onPressed: () {},
-                    ),
-                    const Spacer(),
-                    PrimaryButton(
-                      child: const Text('Eliminar'),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ).intrinsic(),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  OutlineButton(child: const Text('Editar'), onPressed: () {}),
+                  const Spacer(),
+                  PrimaryButton(
+                    child: const Text('Eliminar'),
+                    onPressed: () {
+                      _deleteCentro(widget.id);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ).intrinsic(),
       ],
     );
   }

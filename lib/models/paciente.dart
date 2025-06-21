@@ -23,7 +23,7 @@ class Paciente {
     };
   }
 
-  factory Paciente.fromJson(Map<String, dynamic> json) {
+  factory Paciente.fromMap(Map<String, dynamic> json) {
     return Paciente(
       id: json['id'],
       nombre: json['nombre'],

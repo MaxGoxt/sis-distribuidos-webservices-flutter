@@ -65,7 +65,7 @@ class API {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Paciente.fromJson(item)).toList();
+      return data.map((item) => Paciente.fromMap(item)).toList();
     } else {
       throw Exception('Failed to load pacientes');
     }
@@ -74,7 +74,7 @@ class API {
   Future<Paciente> getPacienteById(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/pacientes/$id'));
     if (response.statusCode == 200) {
-      return Paciente.fromJson(response.body as Map<String, dynamic>);
+      return Paciente.fromMap(response.body as Map<String, dynamic>);
     } else {
       throw Exception('Failed to load paciente');
     }
@@ -87,7 +87,7 @@ class API {
       body: paciente.toJson(),
     );
     if (response.statusCode == 201) {
-      return Paciente.fromJson(response.body as Map<String, dynamic>);
+      return Paciente.fromMap(response.body as Map<String, dynamic>);
     } else {
       throw Exception('Failed to create paciente');
     }
@@ -100,7 +100,7 @@ class API {
       body: paciente.toJson(),
     );
     if (response.statusCode == 200) {
-      return Paciente.fromJson(response.body as Map<String, dynamic>);
+      return Paciente.fromMap(response.body as Map<String, dynamic>);
     } else {
       throw Exception('Failed to update paciente');
     }
@@ -117,16 +117,16 @@ class API {
     final response = await http.get(Uri.parse('$baseUrl/centrosmedicos'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body) as List<dynamic>;
-      return data.map((item) => CentroMedico.fromJson(item)).toList();
+      return data.map((item) => CentroMedico.fromMap(item)).toList();
     } else {
       throw Exception('Failed to load centros medicos');
     }
   }
 
   Future<CentroMedico> getCentroMedicoById(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/centros_medicos/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/centrosmedicos/$id'));
     if (response.statusCode == 200) {
-      return CentroMedico.fromJson(response.body as Map<String, dynamic>);
+      return CentroMedico.fromMap(jsonDecode(response.body) as Map<String, dynamic>);
     } else {
       throw Exception('Failed to load centro medico');
     }
@@ -139,7 +139,7 @@ class API {
       body: json.encode(centroMedico.toJson()),
     );
     if (response.statusCode == 201 || response.statusCode == 200) {
-      return CentroMedico.fromJson(
+      return CentroMedico.fromMap(
         json.decode(response.body) as Map<String, dynamic>,
       );
     } else {
@@ -157,7 +157,7 @@ class API {
       body: centroMedico.toJson(),
     );
     if (response.statusCode == 200) {
-      return CentroMedico.fromJson(response.body as Map<String, dynamic>);
+      return CentroMedico.fromMap(response.body as Map<String, dynamic>);
     } else {
       throw Exception('Failed to update centro medico');
     }
@@ -165,9 +165,9 @@ class API {
 
   Future<void> deleteCentroMedico(int id) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/centros_medicos/$id'),
+      Uri.parse('$baseUrl/centrosmedicos/$id'),
     );
-    if (response.statusCode != 204) {
+    if (response.statusCode != 200) {
       throw Exception('Failed to delete centro medico');
     }
   }
