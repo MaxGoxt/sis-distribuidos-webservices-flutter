@@ -24,8 +24,7 @@ class SortableColumn extends StatelessWidget {
         swapItemInLists(allLists, value, list, list.length);
         onUpdate();
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: ListView(
         children: [
           Text(
             title,

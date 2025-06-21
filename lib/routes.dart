@@ -45,7 +45,7 @@ final GoRoute centrosRoute = GoRoute(
       builder: (BuildContext context, GoRouterState state) {
         final id = int.tryParse(state.pathParameters['id'] ?? '');
         if (id == null) return const Text("Invalid ID");
-        return Layout(page: CentroMedico());
+        return Layout(page: CentroMedico(id: id,));
       },
     ),
   ],

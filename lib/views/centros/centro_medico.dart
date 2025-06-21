@@ -4,7 +4,6 @@ import 'package:sis_distribuidos_webservices/widgets/draggable/column.dart';
 import 'package:sis_distribuidos_webservices/models/centro_medico.dart' as model;
 
 class CentroMedico extends StatefulWidget implements DefaultPage {
-  const CentroMedico({super.key});
 
   @override
   final String namePage = 'Centro Médico';
@@ -12,8 +11,12 @@ class CentroMedico extends StatefulWidget implements DefaultPage {
   @override
   final String description = 'Administración de centros médicos y pacientes';
 
+  final int id;
+
   @override
-  final String route = 'centro-medico';
+  final String route;
+
+  const CentroMedico({super.key, required this.id}) : route = '/centros/$id';
 
   @override
   State<CentroMedico> createState() => _CentroMedicoState();
@@ -36,6 +39,12 @@ class _CentroMedicoState extends State<CentroMedico> {
     const SortableData(Text('Joseph')),
     const SortableData(Text('Thomas')),
     const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
+    const SortableData(Text('Charles')),
   ];
 
   @override
@@ -47,7 +56,7 @@ class _CentroMedicoState extends State<CentroMedico> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height;
 
-    return Column(
+    return ListView(
       children: [
         ConstrainedBox(
           constraints: BoxConstraints(maxHeight: height / 2),
@@ -114,12 +123,12 @@ class _CentroMedicoState extends State<CentroMedico> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Paciente').semiBold(),
+                const Text('Centro Médico').semiBold(),
                 const SizedBox(height: 4),
                 Text(centro.nombre).muted().small(),
 
                 const SizedBox(height: 24),
-                const Text('Documento').semiBold().small(),
+                const Text('Teléfono').semiBold().small(),
 
                 const SizedBox(height: 4),
                 Text(centro.telefono).muted().small(),
