@@ -61,6 +61,7 @@ class Main {
 
   Future<List<Paciente>> getPacientes() async {
     final response = await http.get(Uri.parse('$baseUrl/pacientes'));
+    print(response.body);
     if (response.statusCode == 200) {
       final List<dynamic> data = response.body as List<dynamic>;
       return data.map((item) => Paciente.fromJson(item)).toList();
