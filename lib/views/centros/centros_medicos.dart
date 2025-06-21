@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:sis_distribuidos_webservices/models/centro_medico.dart';
+import 'package:sis_distribuidos_webservices/controllers/main.dart';
 import 'package:sis_distribuidos_webservices/views/page.d.dart';
 
 class CentrosMedicos extends StatefulWidget implements DefaultPage {
@@ -22,77 +23,38 @@ class CentrosMedicos extends StatefulWidget implements DefaultPage {
 }
 
 class _CentrosMedicosState extends State<CentrosMedicos> {
-  final List<CentroMedico> centros = [
-    CentroMedico(
-      direccion: "",
-      id: 1,
-      nombre: 'Centro Médico A',
-      telefono: "099 999 999",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 2,
-      nombre: 'Centro Médico B',
-      telefono: "096 666 666",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 3,
-      nombre: 'Centro Médico C',
-      telefono: "098 888 888",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 4,
-      nombre: 'Centro Médico D',
-      telefono: "094 444 444",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-    CentroMedico(
-      direccion: "",
-      id: 5,
-      nombre: 'Centro Médico E',
-      telefono: "095 555 555",
-    ),
-  ];
+  final API api = API();
+  List<CentroMedico> centros = [];
+  bool isLoading = true;
+
+  Future<void> _fetchCentros() async {
+    try {
+      var data = await api.getCentrosMedicos();
+      setState(() => centros = data);
+    } catch (e) {
+      print('Error fetching centros médicos: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCentros();
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    if (isLoading) {
+      return Center(child: Text("Cargando centros médicos..."));
+    }
+
+    if (centros.isEmpty) {
+      return Center(child: Text('No hay centros médicos registrados.'));
+    }
+
     return ListView.builder(
       itemCount: centros.length,
       itemBuilder: (context, index) {

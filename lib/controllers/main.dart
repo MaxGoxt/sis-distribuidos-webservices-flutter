@@ -114,9 +114,9 @@ class API {
   }
 
   Future<List<CentroMedico>> getCentrosMedicos() async {
-    final response = await http.get(Uri.parse('$baseUrl/centros_medicos'));
+    final response = await http.get(Uri.parse('$baseUrl/centrosmedicos'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = response.body as List<dynamic>;
+      final List<dynamic> data = json.decode(response.body) as List<dynamic>;
       return data.map((item) => CentroMedico.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load centros medicos');

@@ -22,20 +22,17 @@ class Pacientes extends StatefulWidget implements DefaultPage {
 }
 
 class _PacientesState extends State<Pacientes> {
-  List<Paciente> pacientes = []; // ← ✅ lista inicial vacía
-  bool isLoading = true;         // ← opcional: para mostrar un loader
-
   final API api = API();
+  List<Paciente> pacientes = [];
+  bool isLoading = true;
 
   Future<void> _fetchPacientes() async {
     try {
       var data = await api.getPacientes();
-      setState(() {
-        pacientes = data;
-        isLoading = false;
-      });
+      setState(() => pacientes = data);
     } catch (e) {
       print('Error fetching pacientes: $e');
+    } finally {
       setState(() => isLoading = false);
     }
   }
